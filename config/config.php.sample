@@ -1,0 +1,24 @@
+<?php
+
+define('AC_HOST','127.0.0.1');
+define('AC_PORT',8088);
+define('AC_PREFIX','/asterisk/');
+define('AC_TLS',false);
+define('AC_DB_CS','mysql:host=localhost;port=3306;dbname=asteriskcdrdb');
+define('AC_DB_UNAME','root');  /* можно узнат из cat /etc/freepbx.conf */
+define('AC_DB_UPASS','rootpwd');
+
+define('AC_TIMEOUT',0.75);
+define('AC_RECORD_PATH','file:///var/spool/asterisk/monitor/%Y/%m/%d/# ');
+//define('AC_RECORD_PATH','http://{{asterisk_domain}}/monitor/%Y/%m/%d/#'); /* can be http, https or sftp */
+define('AC_TIME_DELTA', 6); /* hours. Ex. GMT+6 = 6 */
+
+define('AC_INTEGRATION_OUTBOUND_CONTEXT', 'from-internal'); /* Outbound dialing context */
+define('AC_INTEGRATION_SIPCHANNEL', 'SIP'); /* SIP or PJSIP */
+define('AC_INTEGRATION_CUSTOM_TYPE', 'asterisk'); /* Integration type in case auto-detect failed. Values: asterisk, freepbx */
+
+if (file_exists('/etc/freepbx.conf')) {
+        define('AC_INTEGRATION_TYPE', 'freepbx');
+} else {
+        define('AC_INTEGRATION_TYPE', AC_INTEGRATION_CUSTOM_TYPE);
+}

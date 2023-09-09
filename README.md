@@ -117,3 +117,7 @@ UPDATE cdr SET addtime=calldate;
 # Доступ к файлам записи разговоров
 Если файлы хранятся на другом сервере, в ./config/config.php заменить {{asterisk_domain}} на ваш домен
 `http://{{asterisk_domain}}/monitor/%Y/%m/%d/#`
+
+
+# Это вилка проекта
+https://github.com/iqtek/amocrm_asterisk

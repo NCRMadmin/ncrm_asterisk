@@ -41,9 +41,6 @@
   * PHP с расширением PDO для бэкэнда CDR
   * Сервер с Asterisk в одной сети с интеграцией
 
-## Настройка apache
-  - Настроить сертификат SSL в соответствии с инструкцией: https://www.digitalocean.com/community/tutorials/how-to-secure-apache-with-let-s-encrypt-on-centos-7
-
 ## Настройка asterisk
 
 Настроим Asterisk:

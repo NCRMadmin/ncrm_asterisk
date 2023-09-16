@@ -46,8 +46,7 @@
 Настроим Asterisk:
 
 ```
-ln -s ./contrib/manager_ncrm.conf /etc/asterisk/manager_ncrm.conf
-echo \#include manager_ncrm.conf >> /etc/asterisk/manager.conf
+Скопировать все что внутри ./contrib/manager_ncrm.conf в /etc/asterisk/manager_ncrm.conf  или в /etc/asterisk/manager_custom.conf для freepbx
 asterisk -rx "manager reload"
 ```
 Убедится что AMI включен в /etc/asterisk/manager.conf

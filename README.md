@@ -143,14 +143,31 @@ https://<NCRM_DOMAIN>.ncrm.kz/api/widgets/contact_for_ip/<NCRM_APIKEY>/?phone_nu
 ; DEFEXT 101 куда перенаправить если внутренний не найден, например Очередь (Queues/Ring Groups)
 [ncrmtransfer]
 exten => 151,1,Set(DEFEXT=101);
+exten => 151,n,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1);
 exten => 151,n,Set(NCRM_DOMAIN=example)
 exten => 151,n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
-exten => 151,n,Set(TOEXT=${CURL(${NCRM_DOMAIN}/api/widgets/users_for_ip/${NCRM_APIKEY}/?phone_number=${CALLERID(num)})})
+exten => 151,n,Set(TOEXT=${CURL()})
+exten => 151,n,Set(TOEXT=${SHELL(curl --silent ${NCRM_DOMAIN}/api/widgets/users_for_ip/${NCRM_APIKEY}/?phone_number=${CALLERID(num)})})
 exten => 151,n,GotoIf($[${TOEXT}]?from-internal,${TOEXT},1:from-internal,${DEFEXT},1)
 ```
 В настройке Входящая маршрутизация Установить направление  Custom Destination / ncrmtransfer
 Примените изменения
 
+# Добавления звонков в amoCRM
+Добавьте в файл /etc/asterisk/cdr.conf параметр endbeforehexten=yes и примените настройки Asterisk командой «core reload» в CLI Asterisk. Этот параметр нужен для того, чтобы CDR-записи формировались до начала выполнения экстеншена h и обработчиков завершения вызова, при этом во время выполнения экстеншена h и обработчиков завершения вызова, функции CDR(duration) и CDR(billsec) будут выдавать правильные значения.
+Добавьте в диалплан Asterisk /etc/asterisk/extensions_custom.conf следующий контекст:
+```
+[ncrm-add-call]
+exten => s,1,Set(NCRM_DOMAIN=http://example.com)
+exten => s,n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
+exten => s,n,Set(URL=${NCRM_DOMAIN}/api/widgets/hangup_incoming/${NCRM_APIKEY})
+exten => s,n,System(curl -X POST -s -m 1 -H 'Content-Type: application/json' --data '{"call_date":"${CDR(start)}","src":"${CDR(src)}","did":"${DIALEDPEERNUMBER}","bill_sec":"${CDR(billsec)}","recording_file":"${CDR(recordingfile)}","$
+
+[macro-dialout-trunk-predial-hook]
+exten => s,1,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1);
+exten => s,n,MacroExit()
+```
+ПРИМЕЧАНИЕ: Поле CDR recordingfile используется в диалплане FreePBX, но не является стандартным полем CDR, возможно вам нужно будет указать другую переменную вместо CDR(recordingfile).
 
 # Это вилка проекта
 https://github.com/iqtek/amocrm_asterisk

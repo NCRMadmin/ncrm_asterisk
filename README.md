@@ -118,7 +118,7 @@ UPDATE cdr SET addtime=calldate;
 `http://{{asterisk_domain}}/monitor/%Y/%m/%d/#`
 
 
-# Настройка сidlookup
+# Настройка отдачи имени абонента сidlookup
 Для настройки cidlookup нам нужно во FreePBX в разделе Admin — CallerID Lookup Sources добавить источник откуда мы будем брать имя звонящего:
 
 Хост: <NCRM_DOMAIN>.ncrm.kz
@@ -133,6 +133,23 @@ UPDATE cdr SET addtime=calldate;
 Прежде чем проверять callerid lookup (например забить в ncrm свой мобильный и звонить на ваш did) нужно проверить, отдает ли ncrm имя звонящего, для этого нужно выполнить запрос в браузере:
 https://<NCRM_DOMAIN>.ncrm.kz/api/widgets/contact_for_ip/<NCRM_APIKEY>/?phone_number=<PHONE_NUMBER>
 Если все правильно, должны увидеть имя клиента
+
+# Умная переадресация
+Умная переадресация позволяет перевести вызов на ответственного менеджера
+Добавьте Custom Destination (меню admin) ncrmtransfer,151,1
+Добавьте в файл /etc/asterisk/extensions_custom.conf модификацию диалплана ncrmtransfer.
+```
+; 151 виртуальный добавочный
+; DEFEXT 101 куда перенаправить если внутренний не найден, например Очередь (Queues/Ring Groups)
+[ncrmtransfer]
+exten => 151,1,Set(DEFEXT=101);
+exten => 151,n,Set(NCRM_DOMAIN=example)
+exten => 151,n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
+exten => 151,n,Set(TOEXT=${CURL(${NCRM_DOMAIN}/api/widgets/users_for_ip/${NCRM_APIKEY}/?phone_number=${CALLERID(num)})})
+exten => 151,n,GotoIf($[${TOEXT}]?from-internal,${TOEXT},1:from-internal,${DEFEXT},1)
+```
+В настройке Входящая маршрутизация Установить направление  Custom Destination / ncrmtransfer
+Примените изменения
 
 
 # Это вилка проекта

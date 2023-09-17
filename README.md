@@ -118,5 +118,22 @@ UPDATE cdr SET addtime=calldate;
 `http://{{asterisk_domain}}/monitor/%Y/%m/%d/#`
 
 
+# Настройка сidlookup
+Для настройки cidlookup нам нужно во FreePBX в разделе Admin — CallerID Lookup Sources добавить источник откуда мы будем брать имя звонящего:
+
+Хост: <NCRM_DOMAIN>.ncrm.kz
+Порт: 443
+Имя пользователя: <пусто>
+Пароль: <пусто>
+Путь: api/widgets/users_for_ip/<NCRM_APIKEY>
+Запрос: phone_number=[NUMBER]
+
+Далее данный источник нам нужно активировать во входящей маршрутизации (Inbound Routes — Source)
+
+Прежде чем проверять callerid lookup (например забить в ncrm свой мобильный и звонить на ваш did) нужно проверить, отдает ли ncrm имя звонящего, для этого нужно выполнить запрос в браузере:
+https://<NCRM_DOMAIN>.ncrm.kz/api/widgets/contact_for_ip/<NCRM_APIKEY>/?phone_number=<PHONE_NUMBER>
+Если все правильно, должны увидеть имя клиента
+
+
 # Это вилка проекта
 https://github.com/iqtek/amocrm_asterisk

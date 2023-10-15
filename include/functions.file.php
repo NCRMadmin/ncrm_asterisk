@@ -119,7 +119,9 @@ function getFileFromURL($url)
     $urlComponents = parse_url($url);
     switch ($urlComponents['scheme']) {
         case 'file':
-            copy($urlComponents['path'], '/tmp/' . basename($urlComponents['path']));
+            if(!copy($urlComponents['path'], '/tmp/' . basename($urlComponents['path']))) {
+				die("failed to copy recording to /tmp folder");
+			}
             return '/tmp/' . basename($urlComponents['path']);
         case 'http':
         case 'https':
@@ -140,7 +142,7 @@ function getFileFromURL($url)
 
 function encodeToMp3($filePath)
 {
-    $ext = pathinfo($filePath, PATHINFO_EXTENSION);
+    $ext = trim(pathinfo($filePath, PATHINFO_EXTENSION));
     switch ($ext) {
         case 'mp3':
             return $filePath;
@@ -182,4 +184,10 @@ function handleFileOutput($filePath, $recordPath)
     } else {
         return_file($filePath, true);
     }
+}
+
+function redirectToFile($recordPath)
+{
+	header('Location: ' . $recordPath);
+	exit();
 }

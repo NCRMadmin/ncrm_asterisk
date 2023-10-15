@@ -3,17 +3,17 @@
 // Load configuration settings
 require_once dirname(__FILE__) . "/config/config.php";
 
-require_once dirname(__FILE__)."/include/functions.cdr.php";
-require_once dirname(__FILE__)."/include/functions.astman.php";
-require_once dirname(__FILE__)."/include/functions.file.php";
+require_once dirname(__FILE__) . "/include/functions.cdr.php";
+require_once dirname(__FILE__) . "/include/functions.astman.php";
+require_once dirname(__FILE__) . "/include/functions.file.php";
 
-if (AC_HOST<1) {
-	die('Please, configure settings first! Copy  config.php.sample to config.php and set all variables');
+if (AC_HOST < 1) {
+    die('Please, configure settings first! Copy  config.php.sample to config.php and set all variables');
 }
 
 $db_cs = AC_DB_CS;
-$db_u = !strlen(AC_DB_UNAME)?NULL:AC_DB_UNAME;
-$db_p = !strlen(AC_DB_UPASS)?NULL:AC_DB_UPASS;
+$db_u = !strlen(AC_DB_UNAME) ? NULL : AC_DB_UNAME;
+$db_p = !strlen(AC_DB_UPASS) ? NULL : AC_DB_UPASS;
 date_default_timezone_set('UTC');
 
 // Check if AC_RECORD_PATH is defined and GETFILE parameter is present, this is a request for file
@@ -47,30 +47,35 @@ if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
             '%Y' => date('Y', $date),
             '%y' => date('y', $date),
         ];
-        $recordPath = str_replace(array_keys($replace), array_values($replace), $recordPath);
+        $recordPath = trim(str_replace(array_keys($replace), array_values($replace), $recordPath));
     } catch (PDOException $e) {
         header("HTTP/1.0 Internal Server Error");
         die();
     }
 
-    // Retrieve and process the file based on the scheme in the record path
-    $tmpFile = getFileFromURL($recordPath);
+    $directFileDownload = AC_DIRECT_FILE_DOWNLOAD;
+    if ($directFileDownload) {
+        redirectToFile($recordPath);
+    } else {
+        // Retrieve and process the file based on the scheme in the record path
+        $tmpFile = getFileFromURL($recordPath);
 
-    // Handle unsuccessful file retrieval
-    if (!$tmpFile) {
-        die('Unable to retrieve file');
+        // Handle unsuccessful file retrieval
+        if (!$tmpFile) {
+            die('Unable to retrieve file');
+        }
+
+        // Encode the file to mp3 format (if required) and return the file
+        $encodedFile = encodeToMp3($tmpFile);
+
+        // Remove the temporary file
+        if (file_exists($tmpFile)) {
+            unlink($tmpFile);
+        }
+
+        // Redirect or return the encoded file
+        handleFileOutput($encodedFile, $recordPath);
     }
-
-    // Encode the file to mp3 format (if required) and return the file
-    $encodedFile = encodeToMp3($tmpFile);
-
-    // Remove the temporary file
-    if (file_exists($tmpFile)) {
-        unlink($tmpFile);
-    }
-
-    // Redirect or return the encoded file
-    handleFileOutput($encodedFile, $recordPath);
 }
 
 

@@ -118,6 +118,7 @@ function return_file($file, $remove = false)
 		header('Cache-Control: must-revalidate');
 		header('Pragma: public');
 		header('Content-Length: ' . filesize($file));
+		header('Accept-Ranges: bytes');
 		readfile($file);
 		if ($remove === true) {
 			unlink($file);

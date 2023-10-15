@@ -66,7 +66,11 @@ if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
         }
 
         // Encode the file to mp3 format (if required) and return the file
-        $encodedFile = encodeToMp3($tmpFile);
+        if(AC_ENCODE_TYPE === 'ogg') {
+            $encodedFile = encodeToOgg($tmpFile);
+        } else {
+            $encodedFile = encodeToMp3($tmpFile);
+        }
 
         // Remove the temporary file
         if (file_exists($tmpFile)) {

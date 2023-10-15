@@ -10,6 +10,7 @@ define('AC_DB_UPASS','rootpwd');
 
 define('AC_TIMEOUT',0.75);
 define('AC_DIRECT_FILE_DOWNLOAD',false);
+define('AC_ENCODE_TYPE', 'ogg');
 define('AC_RECORD_PATH','file:///var/spool/asterisk/monitor/%Y/%m/%d/# ');
 //define('AC_RECORD_PATH','http://{{asterisk_domain}}/monitor/%Y/%m/%d/#'); /* can be http, https or sftp */
 define('AC_TIME_DELTA', 6); /* hours. Ex. GMT+6 = 6 */

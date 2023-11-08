@@ -88,7 +88,13 @@ webenabled = yes
 
 ```
 
-Убедится что AJAM включен в /etc/asterisk/http.conf или в /etc/asterisk/http_additional.conf для freepbx
+Если данные не совпадают, то надо расписать недостающие строки из файла. В самом конце добавить строку
+
+```
+#include manager_ncrm.conf
+```
+
+Убедится что AJAM включен в /etc/asterisk/http.conf или в /etc/asterisk/http_additional.conf для freepbx. Если данные не совпадают, то надо расписать недостающие строки из файла.
 
 ```
 [general]

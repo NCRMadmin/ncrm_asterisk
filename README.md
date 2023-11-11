@@ -187,17 +187,27 @@ ln -s /var/spool/asterisk/monitor monitor
 mkdir monitor/wired
 touch monitor/wired/.htaccess
 ```
-добавить строку в `Options -Indexes` в monitor/wired/.htaccess
+добавить строку в `Options -Indexes` в monitor/.htaccess
 ```
-nano monitor/wired/.htaccess
-chown asterisk:asterisk monitor/wired
+nano monitor/.htaccess
+chown -R asterisk:asterisk monitor
 ```
 в папке monitor/wired будут храниться конвертированные файлы записей разговоров по этому их надо чистить для этого
 ```
 crontab -e
+нажать INSERT
 ```
 добавить строку `0 2 * * * find /var/spool/asterisk/monitor/wired -name "*.ogg" -type f -mtime +1 -exec rm -f {} \;`
+```
+Esc
+:wq
+Enter
+```
+проверяем
 
+```
+crontab -l
+```
 
 # Настройка отдачи имени абонента сidlookup
 

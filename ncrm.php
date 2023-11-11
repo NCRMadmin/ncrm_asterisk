@@ -21,8 +21,8 @@ if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
     $recordPath = AC_RECORD_PATH;
     $directFileDownloadPath = AC_DIRECT_FILE_DOWNLOAD_PATH;
     $directFileDownload = AC_DIRECT_FILE_DOWNLOAD;
+    $ogg_file = '/monitor/wired/' . strval($_GET['GETFILE']) . ".ogg";
     if($directFileDownload) {
-        $ogg_file = '/monitor/wired/' . pathinfo($recordPath, PATHINFO_FILENAME) . ".ogg";
         if (file_exists("/var/spool/asterisk{$ogg_file}")) {
             redirectToFile($directFileDownloadPath . $ogg_file);
         }
@@ -62,7 +62,6 @@ if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
     }
 
     if ($directFileDownload) {
-        $ogg_file = '/monitor/wired/' . pathinfo($recordPath, PATHINFO_FILENAME) . ".ogg";
         $cmd = "sox '{$recordPath}' '/var/spool/asterisk{$ogg_file}' 2>&1";
         exec($cmd);
         redirectToFile($directFileDownloadPath . $ogg_file);

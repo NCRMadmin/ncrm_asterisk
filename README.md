@@ -25,12 +25,13 @@
 - PHP с поддержкой json_encode (7.4+)
 - PHP с расширением PDO для бэкэнда CDR
 - Сервер с Asterisk в одной сети с интеграцией
+- нужно установить ГИТ (yum install git)
 
 # Файлы
 
-Перейти в `cd /var/www/html/` и распаковать проект в папку /var/www/html/ncrm_asterisk
-ИЛИ
-Склонить в `cd /var/www/html/ && git clone <https://github.com/daulet2030/ncrm_asterisk.git> && cd ncrm_asterisk` и распаковать или склонить проект в папку /var/www/html/ncrm_asterisk/
+Перейти в `cd /var/www/html/`
+И
+Склонить в git clone https://github.com/NCRMadmin/ncrm_asterisk.git
 
 Приложения и файлы настроек:
 
@@ -46,23 +47,26 @@
 ```
 
 ## Настройка интеграции
-
+создаем файл
 ```
 cp ./config/config.php.sample ./config/config.php
-vi ./config/config.php
-
+```
+смотрим созданный файл
+```
+cat ./config/config.php
 ```
 
 Нужно поменять ‘AC_DB_UNAME’ и ‘AC_DB_UPASS’.  Чтобы узнать эти данные перейдите по команде:
 
 ```
-cat /etc/freepbx.conf */
+cat /etc/freepbx.conf
 ```
 
 Обратно перейдите по команде
 
+редактируем файл
 ```
-vi ./config/config.php
+nano ./config/config.php
 ```
 
 И  меняете значение ‘AC_DB_UNAME’ в “AMPDBUSER” и ‘AC_DB_UPASS’ в “AMPDBPASS”
@@ -71,25 +75,29 @@ vi ./config/config.php
 
 Настроим Asterisk:
 
+Скопировать все что внутри
 ```
-Скопировать все что внутри ./contrib/manager_ncrm.conf в /etc/asterisk/manager_ncrm.conf  или в /etc/asterisk/manager_custom.conf для freepbx
+cp ./contrib/manager_ncrm.conf /etc/asterisk/manager_ncrm.conf  
+```
+применяем настройки
+```
 asterisk -rx "manager reload"
-
 ```
 
-Убедится что AMI включен в /etc/asterisk/manager.conf
-
+Убедится что AMI включен в 
+```
+cat /etc/asterisk/manager.conf
+```
+должны быть такие настройки, если нет то надо поправить (bindaddr может отличаться)
 ```
 [general]
 enabled = yes
 port = 5038
 bindaddr = 0.0.0.0
 webenabled = yes
-
 ```
 
-Если данные не совпадают, то надо расписать недостающие строки из файла. В самом конце добавить строку
-
+В самом конце добавить строку
 ```
 #include manager_ncrm.conf
 ```
@@ -103,11 +111,10 @@ enablestatic=no
 bindaddr=::
 bindport=8088
 prefix=asterisk
-
 ```
 
 Убедится что строка /asterisk/rawman есть в ответе команды `asterisk -rx "http show status"` из CLI asterisk-а
-
+вот так должна выглядить
 ```
 freepbx*CLI> http show status
 HTTP Server Status:
@@ -126,20 +133,20 @@ Enabled URI's:
 /asterisk/mxml => XML Manager Event Interface
 /asterisk/ari/... => Asterisk RESTful API
 /asterisk/ws => Asterisk HTTP WebSocket
-
 ```
 
 Для систем на базе freepbx необходимо создать аналогичные настройки используя веб-интерфейс
 
-Узнать логин и пароль от asterisk можно по этой команде
+Установить логин и пароль от asterisk для NCRM скрипта можно по этой команде
 
 ```
 nano /etc/asterisk/manager_ncrm.conf
-
 ```
 
 # Настройка БД
 
+иногда заходит без пароля
+если запросит пароль, то указываем DBUSER и DBPASS (можно посмотреть в файле /etc/freepbx.conf)
 ```
 mysql
 use asteriskcdrdb
@@ -147,6 +154,7 @@ use asteriskcdrdb
 ```
 
 Добавить поле для имени файла записи разговора:
+если есть, то не добавляем поле
 
 ```sql
 ALTER TABLE `cdr` ADD `recordingfile` VARCHAR(120) NOT NULL;

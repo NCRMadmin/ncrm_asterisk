@@ -226,6 +226,30 @@ crontab -l
 https://<NCRM_DOMAIN>.ncrm.kz/api/widgets/contact_for_ip/<NCRM_APIKEY>/?phone_number=<PHONE_NUMBER>
 Если все правильно, должны увидеть имя клиента
 
+надо отредактировать файл
+```
+nano /etc/asterisk/extensions_override_freepbx.conf
+```
+```
+[cidlookup]
+include => cidlookup-custom
+exten => cidlookup_1,1,Set(NCRM_DOMAIN=example)
+exten => cidlookup_1,n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
+exten => cidlookup_1,n,Set(CALLERID(name)=${STRREPLACE(CALLERID(name), ,%20)})
+;exten => cidlookup_1,n,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1);
+exten => cidlookup_1,n,Set(CALLERID(name)=${STRREPLACE(CALLERID(name),",",%2C)})
+exten => cidlookup_1,n,Set(OLDCALLERID=${CALLERID(name)})
+exten => cidlookup_1,n,Set(URL=${NCRM_DOMAIN}/api/widgets/contact_for_ip/${NCRM_APIKEY}?phone_number=${STRREPLACE(CALLERID(num),"+",%2B)})
+exten => cidlookup_1,n,Set(CALLERID(name)=${SHELL(curl -s -L ${URL})})
+;exten => cidlookup_1,n,NoOp(${CALLERID(name)})
+exten => cidlookup_1,n,ExecIf($["${CALLERID(name)}" = ""]?Set(CALLERID(name)=${OLDCALLERID}))
+;exten => cidlookup_1,n,Set(foo=${IF($[ ${CALLERID(name)} = ""]?tval:fval)})
+;exten => cidlookup_1,n,Set(CALLERID(name)=${CALLERID(NAME)} | ${FROM_DID})
+;exten => cidlookup_1,n,NoOp(${CALLERID(name)})
+exten => cidlookup_1,n,Return()
+;--== end of [cidlookup] ==--;
+```
+
 # Умная переадресация
 
 Умная переадресация позволяет перевести вызов на ответственного менеджера

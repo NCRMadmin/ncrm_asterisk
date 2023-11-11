@@ -62,7 +62,7 @@ if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
     }
 
     if ($directFileDownload) {
-        $cmd = "sox '{$recordPath}' /var/spool/asterisk'{$ogg_file}' 2>&1";
+        $cmd = "sox '{$recordPath}' '/var/spool/asterisk{$ogg_file}' 2>&1";
         exec($cmd);
         redirectToFile($directFileDownloadPath . $ogg_file);
     } else {

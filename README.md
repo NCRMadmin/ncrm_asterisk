@@ -258,14 +258,16 @@ exten => cidlookup_1,n,Return()
 
 ```
 ; 151 виртуальный добавочный
-; DEFEXT 101 куда перенаправить если внутренний не найден, например Очередь (Queues/Ring Groups)
+; DEFEXT 1001 куда перенаправить если внутренний не найден, например Очередь (Queues/Ring Groups)
 [ncrmtransfer]
-exten => 151,1,Set(DEFEXT=101);
-exten => 151,n,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1);
+exten => 151,1,Set(DEFEXT=1001);
 exten => 151,n,Set(NCRM_DOMAIN=example)
 exten => 151,n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
-exten => 151,n,Set(TOEXT=${CURL()})
-exten => 151,n,Set(TOEXT=${SHELL(curl --silent ${NCRM_DOMAIN}/api/widgets/users_for_ip/${NCRM_APIKEY}/?phone_number=${CALLERID(num)})})
+exten => 151,n,Set(URL=${NCRM_DOMAIN}/api/widgets/users_for_ip/${NCRM_APIKEY}/?phone_number=${CALLERID(num)})
+exten => 151,n,Set(TOEXT=${SHELL(curl -L --silent ${URL})})
+exten => 151,n,ExecIf($["${TOEXT}" = ""]?Set(TOEXT=${DEFEXT}))
+; Используется для отправки звонков в NCRM
+exten => 151,n,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1(${CALLERID(num)},${TOEXT},${CDR(did)}));
 exten => 151,n,GotoIf($[${TOEXT}]?from-internal,${TOEXT},1:from-internal,${DEFEXT},1)
 
 ```
@@ -280,13 +282,17 @@ exten => 151,n,GotoIf($[${TOEXT}]?from-internal,${TOEXT},1:from-internal,${DEFEX
 
 ```
 [ncrm-add-call]
-exten => s,1,Set(NCRM_DOMAIN=http://example.com)
-exten => s,n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
-exten => s,n,Set(URL=${NCRM_DOMAIN}/api/widgets/hangup_incoming/${NCRM_APIKEY})
-exten => s,n,System(curl -X POST -s -m 1 -H 'Content-Type: application/json' --data '{"call_date":"${CDR(start)}","src":"${CDR(src)}","did":"${DIALEDPEERNUMBER}","bill_sec":"${CDR(billsec)}","recording_file":"${CDR(recordingfile)}","$
+exten => s,1,NoOp(${ARG1} ${ARG2} ${ARG3});GotoIf($["${ARG1}" = "" | "${ARG2}" = ""]?end)
+same => n,Set(NCRM_DOMAIN=example)
+same => n,Set(NCRM_APIKEY=c3344443000001b2ccccbcf7ecccc4b7)
+same => n,Set(URL=${NCRM_DOMAIN}/api/widgets/hangup_incoming/${NCRM_APIKEY}/)
+same => n,Set(JSON_BODY='{"call_date":"${CDR(start)}","src":"${ARG1}","dest":"${ARG2}","did":"${ARG3}","bill_sec":"${CDR(billsec)}","recording_file":"${CDR(recordingfile)}","disposition":"${CDR(disposition)}","unique_id":"${UNIQUEID}"}')
+same => n,System(curl -L -X POST -s -m 2 -H 'Content-Type: application/json' --data ${JSON_BODY}  ${URL})
+same => n(end),Return
 
+; Используется для отправки звонков в NCRM
 [macro-dialout-trunk-predial-hook]
-exten => s,1,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1);
+exten => s,1,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1(${REALCALLERIDNUM},${DIAL_NUMBER},${TRUNKOUTCID}));
 exten => s,n,MacroExit()
 
 ```

@@ -222,7 +222,7 @@ exten => 151,n,GotoIf($[${TOEXT}]?from-internal,${TOEXT},1:from-internal,${DEFEX
 
 # Добавления звонков в NCRM
 
-Добавьте в файл /etc/asterisk/cdr.conf параметр endbeforehexten=yes и примените настройки Asterisk командой «core reload» в CLI Asterisk. Этот параметр нужен для того, чтобы CDR-записи формировались до начала выполнения экстеншена h и обработчиков завершения вызова, при этом во время выполнения экстеншена h и обработчиков завершения вызова, функции CDR(duration) и CDR(billsec) будут выдавать правильные значения.
+Добавьте в файл /etc/asterisk/cdr.conf (в FreePBX /etc/asterisk/cdr_general_custom.conf) параметр endbeforehexten=yes и примените настройки Asterisk командой «core reload» в CLI Asterisk. Этот параметр нужен для того, чтобы CDR-записи формировались до начала выполнения экстеншена h и обработчиков завершения вызова, при этом во время выполнения экстеншена h и обработчиков завершения вызова, функции CDR(duration) и CDR(billsec) будут выдавать правильные значения.
 Добавьте в диалплан Asterisk /etc/asterisk/extensions_custom.conf следующий контекст:
 
 ```

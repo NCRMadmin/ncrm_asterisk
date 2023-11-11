@@ -190,7 +190,7 @@ touch monitor/wired/.htaccess
 добавить строку в `Options -Indexes` в monitor/.htaccess
 ```
 nano monitor/.htaccess
-chown -R asterisk:asterisk monitor
+chown -R asterisk:asterisk monitor/
 ```
 в папке monitor/wired будут храниться конвертированные файлы записей разговоров по этому их надо чистить для этого
 ```

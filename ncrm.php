@@ -19,10 +19,12 @@ date_default_timezone_set('UTC');
 // Check if AC_RECORD_PATH is defined and GETFILE parameter is present, this is a request for file
 if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
     $recordPath = AC_RECORD_PATH;
-    if(AC_DIRECT_FILE_DOWNLOAD) {
+    $directFileDownloadPath = AC_DIRECT_FILE_DOWNLOAD_PATH;
+    $directFileDownload = AC_DIRECT_FILE_DOWNLOAD;
+    if($directFileDownload) {
         $ogg_file = '/monitor/wired/' . pathinfo($recordPath, PATHINFO_FILENAME) . ".ogg";
         if (file_exists("/var/spool/asterisk{$ogg_file}")) {
-            redirectToFile(AC_DIRECT_FILE_DOWNLOAD_PATH . $ogg_file);
+            redirectToFile($directFileDownloadPath . $ogg_file);
         }
     }
 
@@ -59,10 +61,10 @@ if (defined('AC_RECORD_PATH') && !empty($_GET['GETFILE'])) {
         die();
     }
 
-    if (AC_DIRECT_FILE_DOWNLOAD) {
+    if ($directFileDownload) {
         $cmd = "sox '{$recordPath}' /var/spool/asterisk'{$ogg_file}' 2>&1";
         exec($cmd);
-        redirectToFile(AC_DIRECT_FILE_DOWNLOAD_PATH . $ogg_file);
+        redirectToFile($directFileDownloadPath . $ogg_file);
     } else {
         // Retrieve and process the file based on the scheme in the record path
         $tmpFile = getFileFromURL($recordPath);

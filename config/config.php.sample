@@ -9,10 +9,11 @@ define('AC_DB_UNAME','root');  /* можно узнат из cat /etc/freepbx.co
 define('AC_DB_UPASS','rootpwd');
 
 define('AC_TIMEOUT',0.75);
-define('AC_DIRECT_FILE_DOWNLOAD',false);
+define('AC_DIRECT_FILE_DOWNLOAD',true);
 define('AC_ENCODE_TYPE', 'ogg');
 define('AC_RECORD_PATH','file:///var/spool/asterisk/monitor/%Y/%m/%d/# ');
 //define('AC_RECORD_PATH','http://{{asterisk_domain}}/monitor/%Y/%m/%d/#'); /* can be http, https or sftp */
+define('AC_DIRECT_FILE_DOWNLOAD_PATH','http://{{asterisk_domain}}'); /* The path to monitor folder  */
 define('AC_TIME_DELTA', 6); /* hours. Ex. GMT+6 = 6 */
 
 define('AC_INTEGRATION_OUTBOUND_CONTEXT', 'from-internal'); /* Outbound dialing context */

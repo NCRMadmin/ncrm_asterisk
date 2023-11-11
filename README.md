@@ -77,14 +77,14 @@ nano ./config/config.php
 
 Скопировать все что внутри
 ```
-cp ./contrib/manager_ncrm.conf /etc/asterisk/manager_ncrm.conf  
+cp ./contrib/manager_ncrm.conf /etc/asterisk/manager_ncrm.conf
 ```
 применяем настройки
 ```
 asterisk -rx "manager reload"
 ```
 
-Убедится что AMI включен в 
+Убедится что AMI включен в
 ```
 cat /etc/asterisk/manager.conf
 ```
@@ -179,6 +179,25 @@ UPDATE cdr SET addtime=calldate;
 
 Если файлы хранятся на другом сервере, в ./config/config.php заменить {{asterisk_domain}} на ваш домен
 `http://{{asterisk_domain}}/monitor/%Y/%m/%d/#`
+
+Если будет использоваться AC_DIRECT_FILE_DOWNLOAD то в ./config/config.php в AC_DIRECT_FILE_DOWNLOAD_PATH нужно наприсать адрес астериска, так же
+```
+cd /var/www/html
+ln -s /var/spool/asterisk/monitor monitor
+mkdir monitor/wired
+touch monitor/wired/.htaccess
+```
+добавить строку в `Options -Indexes` в monitor/wired/.htaccess
+```
+nano monitor/wired/.htaccess
+chown asterisk:asterisk monitor/wired
+```
+в папке monitor/wired будут храниться конвертированные файлы записей разговоров по этому их надо чистить для этого
+```
+crontab -e
+```
+добавить строку `0 2 * * * find /var/spool/asterisk/monitor/wired -name "*.ogg" -type f -mtime +1 -exec rm -f {} \;`
+
 
 # Настройка отдачи имени абонента сidlookup
 

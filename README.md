@@ -28,6 +28,9 @@
 - нужно установить ГИТ (yum install git)
 
 # Файлы
+если нету GIT, то устанавливаем
+'yum install git'
+
 
 Перейти в `cd /var/www/html/`
 И
@@ -47,6 +50,10 @@
 ```
 
 ## Настройка интеграции
+переходим в нашу созданную папку
+```
+cd ncrm_asterisk/
+```
 создаем файл
 ```
 cp ./config/config.php.sample ./config/config.php

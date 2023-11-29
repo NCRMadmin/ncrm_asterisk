@@ -199,7 +199,7 @@ UPDATE cdr SET addtime=calldate;
 Если файлы хранятся на другом сервере, в ./config/config.php заменить {{asterisk_domain}} на ваш домен
 `http://{{asterisk_domain}}/monitor/%Y/%m/%d/#`
 
-Если будет использоваться AC_DIRECT_FILE_DOWNLOAD то в ./config/config.php в AC_DIRECT_FILE_DOWNLOAD_PATH нужно наприсать адрес астериска, так же
+Если будет использоваться AC_DIRECT_FILE_DOWNLOAD то в ./config/config.php в AC_DIRECT_FILE_DOWNLOAD_PATH нужно прописать адрес астериска, так же
 ```
 cd /var/www/html
 ln -s /var/spool/asterisk/monitor monitor
@@ -209,6 +209,9 @@ touch monitor/wired/.htaccess
 добавить строку в `Options -Indexes` в monitor/.htaccess
 ```
 nano monitor/.htaccess
+```
+прописываем следующую команду
+```
 chown -R asterisk:asterisk monitor/
 ```
 в папке monitor/wired будут храниться конвертированные файлы записей разговоров по этому их надо чистить для этого

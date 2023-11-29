@@ -232,17 +232,21 @@ crontab -l
 
 Для настройки cidlookup нам нужно во FreePBX в разделе Admin — CallerID Lookup Sources добавить источник откуда мы будем брать имя звонящего:
 
-Хост: <NCRM_DOMAIN>.ncrm.kz
+
+Source type : HTTP или HTTPS
+Хост: <NCRM_DOMAIN> (без HTTP)
 Порт: 443
 Имя пользователя: <пусто>
 Пароль: <пусто>
 Путь: api/widgets/users_for_ip/<NCRM_APIKEY>
 Запрос: phone_number=[NUMBER]
 
-Далее данный источник нам нужно активировать во входящей маршрутизации (Inbound Routes — Source)
+Далее данный источник нам нужно активировать во входящей маршрутизации (Inbound Routes - Other - CID Lookup Source )
 
 Прежде чем проверять callerid lookup (например забить в ncrm свой мобильный и звонить на ваш did) нужно проверить, отдает ли ncrm имя звонящего, для этого нужно выполнить запрос в браузере:
-https://<NCRM_DOMAIN>.ncrm.kz/api/widgets/contact_for_ip/<NCRM_APIKEY>/?phone_number=<PHONE_NUMBER>
+```
+https://<NCRM_DOMAIN>/api/widgets/contact_for_ip/<NCRM_APIKEY>/?phone_number=<PHONE_NUMBER>
+```
 Если все правильно, должны увидеть имя клиента
 
 надо отредактировать файл
@@ -268,13 +272,20 @@ exten => cidlookup_1,n,ExecIf($["${CALLERID(name)}" = ""]?Set(CALLERID(name)=${O
 exten => cidlookup_1,n,Return()
 ;--== end of [cidlookup] ==--;
 ```
+после этого можем проверять
+при входящем звонке, если номер звонящего есть в NCRM, то отобразиться его Имя
 
 # Умная переадресация
 
 Умная переадресация позволяет перевести вызов на ответственного менеджера
-Добавьте Custom Destination (меню admin) ncrmtransfer,151,1
-Добавьте в файл /etc/asterisk/extensions_custom.conf модификацию диалплана ncrmtransfer.
+Сначала выбираем внутренний номер, который не используется, я выбрал 151
 
+Добавьте Custom Destination (меню admin) ncrmtransfer,151,1
+Добавьте в файл модификацию диалплана ncrmtransfer.
+```
+nano /etc/asterisk/extensions_custom.conf 
+```
+редактируем нижние строки (домен токен) и сохраняем
 ```
 ; 151 виртуальный добавочный
 ; DEFEXT 1001 куда перенаправить если внутренний не найден, например Очередь (Queues/Ring Groups)
@@ -290,13 +301,12 @@ exten => 151,n,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1(${CALLERID(num
 exten => 151,n,GotoIf($[${TOEXT}]?from-internal,${TOEXT},1:from-internal,${DEFEXT},1)
 
 ```
-
-В настройке Входящая маршрутизация Установить направление  Custom Destination / ncrmtransfer
+Теперь в настройке Входящая маршрутизация (inbound routes) установить направление  Custom Destination / ncrmtransfer
 Примените изменения
 
 # Добавления звонков в NCRM
 
-Добавьте в файл /etc/asterisk/cdr.conf (в FreePBX /etc/asterisk/cdr_general_custom.conf) параметр endbeforehexten=yes и примените настройки Asterisk командой «core reload» в CLI Asterisk. Этот параметр нужен для того, чтобы CDR-записи формировались до начала выполнения экстеншена h и обработчиков завершения вызова, при этом во время выполнения экстеншена h и обработчиков завершения вызова, функции CDR(duration) и CDR(billsec) будут выдавать правильные значения.
+Добавьте в файл /etc/asterisk/cdr.conf (в FreePBX /etc/asterisk/cdr_general_custom.conf) параметр endbeforehexten=yes и примените настройки Asterisk командой 'asterisk -rx "core reload"' в CLI Asterisk. Этот параметр нужен для того, чтобы CDR-записи формировались до начала выполнения экстеншена h и обработчиков завершения вызова, при этом во время выполнения экстеншена h и обработчиков завершения вызова, функции CDR(duration) и CDR(billsec) будут выдавать правильные значения.
 Добавьте в диалплан Asterisk /etc/asterisk/extensions_custom.conf следующий контекст:
 
 ```
@@ -315,6 +325,14 @@ exten => s,1,Set(CHANNEL(hangup_handler_push)=ncrm-add-call,s,1(${REALCALLERIDNU
 exten => s,n,MacroExit()
 
 ```
+теперь все записи отправляются в NCRM
+чтобы проверить можете войти в лог Астериска 
+```
+asterisk -rvvvvv
+```
+и там увидите примерно такие записи. (значит все работает)
+Executing [s@ncrm-add-call:6] 
+
 
 ПРИМЕЧАНИЕ: Поле CDR recordingfile используется в диалплане FreePBX, но не является стандартным полем CDR, возможно вам нужно будет указать другую переменную вместо CDR(recordingfile).
 

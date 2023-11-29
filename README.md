@@ -116,7 +116,11 @@ nano /etc/asterisk/manager.conf
 ```
 
 Убедится что AJAM включен в /etc/asterisk/http.conf или в /etc/asterisk/http_additional.conf для freepbx. Если данные не совпадают, то надо расписать недостающие строки из файла.
-
+заходим и смотрим
+```
+cat /etc/asterisk/http_additional.conf
+```
+должны быть такие настройки
 ```
 [general]
 enabled=yes
@@ -125,6 +129,9 @@ bindaddr=::
 bindport=8088
 prefix=asterisk
 ```
+если у вас FreePBX и если в настройках не хватает PREFIX
+то его добавляем через Freepbx (файл редактировать нельзя, только для Астериск можно)
+Settings - Advanced settings - в поле HTTP Prefix добавляем asterisk
 
 Убедится что строка /asterisk/rawman есть в ответе команды `asterisk -rx "http show status"` из CLI asterisk-а
 вот так должна выглядить
@@ -151,7 +158,6 @@ Enabled URI's:
 Для систем на базе freepbx необходимо создать аналогичные настройки используя веб-интерфейс
 
 Установить логин и пароль от asterisk для NCRM скрипта можно по этой команде
-
 ```
 nano /etc/asterisk/manager_ncrm.conf
 ```

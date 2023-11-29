@@ -103,6 +103,12 @@ port = 5038
 bindaddr = 0.0.0.0
 webenabled = yes
 ```
+еще webenabled = yes может отсутствовать и его надо добавить
+у нас  нету webenabled = yes, поэтому мы его добавляем
+```
+nano /etc/asterisk/manager.conf
+```
+
 
 В самом конце добавить строку
 ```

@@ -332,7 +332,13 @@ asterisk -rvvvvv
 ```
 и там должны быть примерно такие записи.
 ```
-Executing [s@ncrm-add-call:6] 
+Executing [s@ncrm-add-call:1] NoOp("SIP/транк-0000005f", "+НОМЕР КЛИЕНТА 101 НОМЕР ТЕЛЕФОНИИ") in new stack
+Executing [s@ncrm-add-call:2] Set("SIP/транк-0000005f", "NCRM_DOMAIN=ВАШ ДОМЕН") in new stack
+Executing [s@ncrm-add-call:3] Set("SIP/транк-0000005f", "NCRM_APIKEY=ТОКЕН") in new stack
+Executing [s@ncrm-add-call:4] Set("SIP/транк-0000005f", "URL=ВАШ ДОМЕН/api/widgets/hangup_incoming/ТОКЕН/") in new stack
+Executing [s@ncrm-add-call:5] Set("SIP/транк-0000005f", "JSON_BODY='{"call_date":"2023-11-29 14:07:11","src":"+НОМЕР КЛИЕНТА","dest":"101","did":"НОМЕР ТЕЛЕФОНИИ","bill_sec":"0","recording_file":"","disposition":"NO ANSWER","unique_id":"1701245231.95"}'") in new stack
+Executing [s@ncrm-add-call:6] System("SIP/транк-0000005f", "curl -L -X POST -s -m 2 -H 'Content-Type: application/json' --data '{"call_date":"2023-11-29 14:07:11","src":"+НОМЕР КЛИЕНТА","dest":"101","did":"НОМЕР ТЕЛЕФОНИИ","bill_sec":"0","recording_file":"","disposition":"NO ANSWER","unique_id":"1701245231.95"}'  ВАШ ДОМЕН/api/widgets/hangup_incoming/ТОКЕН/") in new stack
+Executing [s@ncrm-add-call:7] Return("SIP/транк-0000005f", "") in new stack
 ```
 если видете, значит все работает
 

@@ -78,6 +78,8 @@ nano ./config/config.php
 
 И  меняете значение ‘AC_DB_UNAME’ в “AMPDBUSER” и ‘AC_DB_UPASS’ в “AMPDBPASS”
 
+также в поле 
+
 ## Настройка asterisk
 
 Настроим Asterisk:
@@ -199,7 +201,8 @@ UPDATE cdr SET addtime=calldate;
 Если файлы хранятся на другом сервере, в ./config/config.php заменить {{asterisk_domain}} на ваш домен
 `http://{{asterisk_domain}}/monitor/%Y/%m/%d/#`
 
-Если будет использоваться AC_DIRECT_FILE_DOWNLOAD то в ./config/config.php в AC_DIRECT_FILE_DOWNLOAD_PATH нужно прописать адрес астериска, так же
+Если будет использоваться AC_DIRECT_FILE_DOWNLOAD то в ./config/config.php в AC_DIRECT_FILE_DOWNLOAD_PATH нужно прописать адрес астериска
+еще надо будет удалить 'file://' в строке AC_RECORD_PATH
 ```
 cd /var/www/html
 ln -s /var/spool/asterisk/monitor monitor
@@ -230,6 +233,7 @@ Enter
 ```
 crontab -l
 ```
+
 
 # Настройка отдачи имени абонента сidlookup
 

@@ -34,7 +34,7 @@
 
 Перейти в `cd /var/www/html/`
 И
-Склонить в git clone https://github.com/NCRMadmin/ncrm_asterisk.git
+Склонить в `git clone https://github.com/NCRMadmin/ncrm_asterisk.git`
 
 Приложения и файлы настроек:
 

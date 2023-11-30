@@ -287,7 +287,9 @@ exten => cidlookup_1,n,Return()
 Умная переадресация позволяет перевести вызов на ответственного менеджера
 Сначала выбираем внутренний номер, который не используется, я выбрал 151
 
-Добавьте Custom Destination (меню admin) ncrmtransfer,151,1
+Добавьте Custom Destination (меню admin) 
+Target - ncrmtransfer,151,1
+Description - ncrmtransfer
 Добавьте в файл модификацию диалплана ncrmtransfer.
 ```
 nano /etc/asterisk/extensions_custom.conf 

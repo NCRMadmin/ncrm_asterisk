@@ -209,7 +209,7 @@ ln -s /var/spool/asterisk/monitor monitor
 mkdir monitor/wired
 touch monitor/wired/.htaccess
 ```
-добавить строку в `Options -Indexes` в monitor/.htaccess
+добавить строку `Options -Indexes` в monitor/.htaccess
 ```
 nano monitor/.htaccess
 ```

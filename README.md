@@ -352,7 +352,3 @@ Executing [s@ncrm-add-call:7] Return("SIP/транк-0000005f", "") in new stack
 если видете, значит все работает
 
 ПРИМЕЧАНИЕ: Поле CDR recordingfile используется в диалплане FreePBX, но не является стандартным полем CDR, возможно вам нужно будет указать другую переменную вместо CDR(recordingfile).
-
-# Это вилка проекта
-
-https://github.com/iqtek/amocrm_asterisk
